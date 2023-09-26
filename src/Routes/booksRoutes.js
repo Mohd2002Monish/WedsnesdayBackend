@@ -14,8 +14,9 @@ app.get("/books", async (req, res) => {
   }
 });
 app.get("/book/:id", async (req, res) => {
+  console.log(req.params.id);
   try {
-    const books = await Books.findById(req.params.id);
+    const books = await Books.findById({ _id: req.params.id });
     if (!books) {
       return res.status(404).json({ message: "Books not found" });
     }
@@ -33,13 +34,26 @@ app.post("/books", async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
-app.delete("/Book/:id", async (req, res) => {
+app.delete("/book/:id", async (req, res) => {
   try {
     const book = await Books.findByIdAndDelete(req.params.id);
     if (!book) {
       return res.status(404).json({ message: "Book not found" });
     }
     res.json({ message: "Book deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+app.put("/book/:id", async (req, res) => {
+  try {
+    const updatedBook = await Books.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!updatedBook) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+    res.json({ message: "Book updated successfully", updatedBook });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
