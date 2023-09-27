@@ -13,6 +13,7 @@ app.get("/books", async (req, res) => {
     if (!books) {
       return res.status(404).json({ message: "Books not found" });
     }
+    console.log(books.length);
     res.json(books);
   } catch (err) {
     res.status(500).json({ message: err.message });
