@@ -3,8 +3,13 @@ const Books = require("../Model/Books.schema");
 const app = express();
 app.use(express.json());
 app.get("/books", async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const perPage = 10;
+
+  const skip = (page - 1) * perPage;
+
   try {
-    const books = await Books.find({});
+    const books = await Books.find({}).skip(skip).limit(perPage);
     if (!books) {
       return res.status(404).json({ message: "Books not found" });
     }
@@ -14,7 +19,6 @@ app.get("/books", async (req, res) => {
   }
 });
 app.get("/book/:id", async (req, res) => {
-  console.log("L");
   try {
     const book = await Books.findOne({ _id: req.params.id });
     if (!book) {
